@@ -507,6 +507,7 @@ s2eobj-y += s2e/Plugins/Searchers/CooperativeSearcher.o
 s2eobj-y += s2e/Plugins/HostFiles.o
 s2eobj-y += s2e/Plugins/LibraryCallMonitor.o
 s2eobj-y += s2e/Plugins/Searchers/MaxTbSearcher.o
+s2eobj-y += s2e/Plugins/ExploitGenerator.o
 
 #sqlite database is deprecated now
 #s2eobj-y += s2e/sqlite3.o
