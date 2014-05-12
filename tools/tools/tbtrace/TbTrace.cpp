@@ -365,6 +365,27 @@ void TbTrace::onItem(unsigned traceIndex,
         return;
     }
 
+    if (hdr.type == s2e::plugins::TRACE_PAGEFAULT) {
+        const s2e::plugins::ExecutionTracePageFault &fault = *(s2e::plugins::ExecutionTracePageFault*)item;
+        m_output << "PF @" << std::hex << fault.pc << " addr=" <<  fault.address << " isWrite=" << (int) fault.isWrite;
+        m_output << std::endl;
+        return;
+    }
+
+    if (hdr.type == s2e::plugins::TRACE_EXCEPTION) {
+        const s2e::plugins::ExecutionTraceException &fault = *(s2e::plugins::ExecutionTraceException*)item;
+        m_output << "EXCP @" << std::hex << fault.pc << " vec=" <<  fault.vector;
+        m_output << std::endl;
+        return;
+    }
+
+    if (hdr.type == s2e::plugins::TRACE_STATE_SWITCH) {
+        const s2e::plugins::ExecutionTraceStateSwitch &s = *(s2e::plugins::ExecutionTraceStateSwitch*)item;
+        m_output << "State switch " << hdr.stateId << " => " << s.newStateId;
+        m_output << std::endl;
+        return;
+    }
+
     if (hdr.type == s2e::plugins::TRACE_FORK) {
         s2e::plugins::ExecutionTraceFork *f = (s2e::plugins::ExecutionTraceFork*)item;
         m_output << "Forked at 0x" << std::hex << f->pc << " - ";
@@ -404,9 +425,14 @@ void TbTrace::onItem(unsigned traceIndex,
         m_output << "S=" << std::dec << hdr.stateId << " P=0x" << std::hex << hdr.pid << " PC=0x" << std::hex << te->pc << " " << type << (int)te->size << "[0x"
                 << std::hex << te->address << "]=0x" << std::setw(10) << std::setfill('0') << te->value;
 
-	if (te->flags & EXECTRACE_MEM_HASHOSTADDR) {
+        if (te->flags & EXECTRACE_MEM_HASHOSTADDR) {
            m_output << " hostAddr=0x" << te->hostAddress << " ";
         }
+
+        if (te->flags & EXECTRACE_MEM_OBJECTSTATE) {
+           m_output << " cb=0x" << te->concreteBuffer << " ";
+        }
+
         m_output << "\t";
 
         printDebugInfo(hdr.pid, te->pc, 0, false);
