@@ -2134,7 +2134,14 @@ void S2EExecutionState::addConstraint(klee::ref<klee::Expr> e)
         assert(res && !truth  &&  "state has invalid constraint set");
     }
 
-    constraints.addConstraint(e);
+    // XXX: Are kernel space constraints really useless?
+    if (getPc() >= 0xC0000000) {
+        g_s2e->getDebugStream(this) <<  "Ignore kernel space constraint, eip="
+            << hexval(getPc()) << '\n';
+    }
+    else {
+        constraints.addConstraint(e);
+    }
 }
 
 } // namespace s2e
