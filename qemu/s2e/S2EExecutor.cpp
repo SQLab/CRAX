@@ -1942,6 +1942,8 @@ uintptr_t S2EExecutor::executeTranslationBlock(
         int slowdown = UseFastHelpers ? ClockSlowDownFastHelpers : ClockSlowDown;
         cpu_enable_scaling(slowdown);
 
+        m_s2e->getCorePlugin()->onKleeExecutionStart.emit(state);
+
         return executeTranslationBlockKlee(state, tb);
 
     } else {

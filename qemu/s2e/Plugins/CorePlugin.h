@@ -319,6 +319,11 @@ public:
                 klee::ref<klee::Expr> /* eipValue */>
           onEipCorrupt;
 
+    /** Signal emitted before calling executeTranslationBlockKlee() */
+    sigc::signal<void,
+                S2EExecutionState *>
+          onKleeExecutionStart;
+
 };
 
 } // namespace s2e
