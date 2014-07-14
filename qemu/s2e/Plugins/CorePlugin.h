@@ -313,6 +313,16 @@ public:
                 QDict * /* result */>
           onMonitorEvent;
 
+    /** Signal emitted when a register is corrupted by an invalid value */
+    sigc::signal<void,
+                S2EExecutionState *,
+                klee::ref<klee::Expr> /* eipValue */>
+          onEipCorrupt;
+
+    /** Signal emitted before calling executeTranslationBlockKlee() */
+    sigc::signal<void,
+                S2EExecutionState *>
+          onKleeExecutionStart;
 
 };
 

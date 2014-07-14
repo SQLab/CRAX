@@ -134,6 +134,7 @@ struct TCGLLVMContextPrivate {
     Function *m_helperForkAndConcretize;
     Function *m_helperMakeSymbolic;
     Function *m_helperGetValue;
+    Function *m_helperEipCorrupt;
     Function* m_qemu_ld_helpers[5];
     Function* m_qemu_st_helpers[5];
 #endif
@@ -201,6 +202,9 @@ public:
         if (isa<ConstantInt>(orig)) {
             return orig;
         }
+
+        m_builder.CreateCall(m_helperEipCorrupt,
+                             m_builder.CreateZExt(orig, intType(64)));
 
         Value *valueToStore = m_builder.CreateCall3(m_helperForkAndConcretize,
                             m_builder.CreateZExt(orig, intType(64)),
@@ -418,6 +422,9 @@ void TCGLLVMContextPrivate::initializeHelpers()
             m_module->getFunction("tcg_llvm_make_symbolic");
     m_helperGetValue =
             m_module->getFunction("tcg_llvm_get_value");
+
+    m_helperEipCorrupt =
+            m_module->getFunction("tcg_llvm_eip_corrupt");
 
     m_qemu_ld_helpers[0] = m_module->getFunction("__ldb_mmu");
     m_qemu_ld_helpers[1] = m_module->getFunction("__ldw_mmu");
